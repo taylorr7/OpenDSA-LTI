@@ -6,9 +6,9 @@ set :stage, :production
 # is considered to be the first unless any hosts have the primary
 # property set.  Don't declare `role :all`, it's a meta role.
 
-role :app, %w{deploy@128.173.236.80}
-role :web, %w{deploy@128.173.236.80}
-role :db,  %w{deploy@128.173.236.80}
+role :app, %w{deploy@141.233.166.75}
+role :web, %w{deploy@141.233.166.75}
+role :db,  %w{deploy@141.233.166.75}
 
 
 # Extended Server Syntax
