@@ -44,7 +44,13 @@ class LtiController < ApplicationController
       render(:error)
     end
 
-    @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], launch_params)
+    lti_param = {
+      "lis_outcome_service_url" => "#{launch_params['lis_outcome_service_url']}",
+      "lis_result_sourcedid" => "#{launch_params['lis_result_sourcedid']}"
+    }
+    # @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], launch_params)
+    @tp = IMS::LTI::ToolProvider.new(key, $oauth_creds[key], lti_param)
+
 
     if !@tp.outcome_service?
       @message = "This tool wasn't lunched as an outcome service"
@@ -58,10 +64,14 @@ class LtiController < ApplicationController
     if res.success?
       # @score = request_params['score']
       # @tp.lti_msg = "Message shown when arriving back at Tool Consumer."
-      render :json => { :message => 'success' }.to_json
+      render :json => { :message => 'success', :res => res.to_json }.to_json
+      # error = Error.new(:class_name => 'post_replace_result_success', :message => res.inspect, :params => lti_param.to_s)
+      # error.save!
       # erb :assessment_finished
     else
-      render :json => { :message => 'failure' }.to_json
+      render :json => { :message => 'failure', :res => res.to_json }.to_json
+      error = Error.new(:class_name => 'post_replace_result_fail', :message => res.inspect, :params => lti_param.to_s)
+      error.save!
       # @tp.lti_errormsg = "The Tool Consumer failed to add the score."
       # show_error "Your score was not recorded: #{res.description}"
       # return erb :error
